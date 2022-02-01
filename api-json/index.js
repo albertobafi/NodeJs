@@ -95,6 +95,16 @@ app.get('/koders/:name', async(request, response) => {
     response.send(koderFound)
 })
 
+app.get('/koders/sex/:sex', async(request, response) => {
+    const sex = request.params.sex
+    const data = await fspromise.readFile('kodemia.json', 'utf8')
+    const db = JSON.parse(data)
+    const koderSex = db.koders.filter((koder) => {
+        return koder.sex.toLowerCase() === sex.toLowerCase()
+    })
+    response.json(koderSex)
+})
+
 app.listen(8080,()=>{
   console.log('listening server')
 })
