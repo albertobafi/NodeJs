@@ -18,6 +18,7 @@
   "homepage": "https://github.com/albertobafi/NodeJs#readme",
   "devDependencies": {
     "colors": "^1.4.0",
+    "nodemon": "^2.0.15",
     "yargs-parser": "^21.0.0"
   }
 }

@@ -1,0 +1,50 @@
+
+{
+    "koders": [
+      {
+        "name": "Emilio",
+        "age": 29,
+        "nationality": "mexican",
+        "generationNumber": 15,
+        "hobbies": [ "Bataca", "Diseño" ],
+        "sex": "m",
+        "city": "GDL"
+      },
+      {
+        "name": "Erik",
+        "age": 28,
+        "nationality": "mexican",
+        "generationNumber": 15,
+        "hobbies": [ "Nadar", "Football" ],
+        "sex": "m",
+        "city": "CDMX"
+      },
+      {
+        "name": "Job",
+        "age": 33,
+        "nationality": "mexican",
+        "generationNumber": 15,
+        "hobbies": [ "Gym", "PS" ],
+        "sex": "m",
+        "city": "CDMX"
+      },
+      {
+        "name": "Ismael",
+        "age": 40,
+        "nationality": "mexican",
+        "generationNumber": 15,
+        "hobbies": [ "Musica", "Chorcha" ],
+        "sex": "m",
+        "city": "CDMX"
+      },
+      {
+        "name": "Sara",
+        "age": 32,
+        "nationality": "mexican",
+        "generationNumber": 15,
+        "hobbies": [ "Caminar", "Leer" ],
+        "sex": "f",
+        "city": "Durango"
+      }
+    ]
+  }
