@@ -1,8 +1,7 @@
-const { json } = require("body-parser");
 const express = require("express");
 const fs = require("fs");
-const fspromise = require("fs/promises");
 const app = express();
+const fspromise = require("fs/promises");
 
 // //funcion para terminar en caso de error 
 // const atTheEnd = (err) => {
@@ -77,32 +76,37 @@ const app = express();
 //   response.send(data)
 // })
 
-app.get('/koders', async (request, response) => {
-    const data = await fs.readFile('kodemia.json', 'utf8')
-    const dataParsed = JSON.parse(data)
-    response.send(dataParsed.koders)
+// app.listen(8080,()=>{
+//   console.log('listening server')
+// })
+
+//consultas a un archivo json
+app.get('/koders',async (request,response)=>{
+  const data = await fspromise.readFile('kodemia.json','utf-8')
+  const dataParsed = JSON.parse(data)
+  response.json(dataParsed.koders)
 })
 
-app.get('/koders/:name', async(request, response) => {
-    const name = request.params.name
-    const data = await fs.readFile('kodemia.json', 'utf8')
-    const db = JSON.parse(data)
-
-    const koderFound = db.koders.find((koder) =>{
-        return koder.name.toLowerCase() === name.toLowerCase()//normalizacion
-    })
-
-    response.send(koderFound)
+app.get('/koders/:id',async(request,response)=>{
+  const id = request.params.id
+  const data = await fspromise.readFile('kodemia.json','utf-8')
+  const db = JSON.parse(data)
+  const koderfound = db.koders.find((koder)=>{
+    return koder.id.toLowerCase() == id.toLowerCase()
+  })
+  
+  response.json(koderfound)
 })
 
-app.get('/koders/sex/:sex', async(request, response) => {
-    const sex = request.params.sex
-    const data = await fspromise.readFile('kodemia.json', 'utf8')
-    const db = JSON.parse(data)
-    const koderSex = db.koders.filter((koder) => {
-        return koder.sex.toLowerCase() === sex.toLowerCase()
-    })
-    response.json(koderSex)
+app.get('/koders/sex/:sex',async(request,response)=>{
+  const sex = request.params.sex
+  const data = await fspromise.readFile('kodemia.json','utf-8')
+  const db = JSON.parse(data)
+  const koderfound = db.koders.filter((result)=>{
+    return result.sex.toLowerCase() == sex.toLowerCase()
+  })
+  
+  response.json(koderfound)
 })
 
 app.listen(8080,()=>{
