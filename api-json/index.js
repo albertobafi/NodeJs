@@ -1,7 +1,7 @@
 const express = require("express");
-const fs = require("fs");
 const app = express();
-const fspromise = require("fs/promises");
+app.use(express.json())// sin esta linea no puedo leer body
+const fs = require("fs/promises");
 
 // //funcion para terminar en caso de error 
 // const atTheEnd = (err) => {
@@ -82,33 +82,109 @@ const fspromise = require("fs/promises");
 
 //consultas a un archivo json
 app.get('/koders',async (request,response)=>{
-  const data = await fspromise.readFile('kodemia.json','utf-8')
-  const dataParsed = JSON.parse(data)
-  response.json(dataParsed.koders)
+  const data = await fs.readFile('kodemia.json','utf-8')
+  const db = JSON.parse(data)
+  let kodersFound = db.koders
+
+  if(request.query.max_age){
+    kodersFound = kodersFound.filter((koder)=>{
+      return koder.age <= parseInt(request.query.max_age)
+    })
+  }
+
+  response.json(kodersFound)
 })
 
 app.get('/koders/:id',async(request,response)=>{
-  const id = request.params.id
-  const data = await fspromise.readFile('kodemia.json','utf-8')
+  const id = parseInt(request.params.id)
+  const data = await fs.readFile('kodemia.json','utf-8')
   const db = JSON.parse(data)
+
   const koderfound = db.koders.find((koder)=>{
-    return koder.id.toLowerCase() == id.toLowerCase()
+    return koder.id === id
   })
   
   response.json(koderfound)
 })
 
-app.get('/koders/sex/:sex',async(request,response)=>{
-  const sex = request.params.sex
-  const data = await fspromise.readFile('kodemia.json','utf-8')
+//Crear un koder
+app.post('/koders', async (request, response)=>{
+
+  const data = await fs.readFile('kodemia.json', 'utf8')
   const db = JSON.parse(data)
-  const koderfound = db.koders.filter((result)=>{
-    return result.sex.toLowerCase() == sex.toLowerCase()
-  })
+
+  const newKoderId = db.koders.length + 1
+  const newKoderData = {
+    id: newKoderId,
+    ... request.body
+  }
+
+  db.koders.push(newKoderData)
+
+  const dbAsString = JSON.stringify(db, '\n', 2)
+  await fs.writeFile('kodemia.json', dbAsString , 'utf8')
+
+  response.json(db.koders)
+})
+
+//borrar a alguno de los koders
+// /koders/1
+app.delete('/koders/:id', async (request, response) => {
+  const id = parseInt(request.params.id)
+  const data = await fs.readFile('kodemia.json', 'utf8')
+  const db = JSON.parse(data)
+
+  const newKodersArray = db.koders.filter((koder) => id != koder.id)
+  db.koders = newKodersArray
+
+  const dbAsString = JSON.stringify(db, '\n', 2)
+  await fs.writeFile('kodemia.json', dbAsString, 'utf8')
+
+  response.json(db.koders)
+
+})
+
+app.patch('/koders/:id', async (request, response) => {
+  const id = parseInt(request.params.id)
+
+  if (isNaN(id)){
+    response
+    .status(400)
+    .json({
+      message: 'Id must be a number'
+    })
+    return
+  }
+
+  const data = await fs.readFile('kodemia.json', 'utf8')
+  const db = JSON.parse(data)
+
+  const koderFoundIndex = db.koders.findIndex((koder) => id === koder.id)
   
-  response.json(koderfound)
+  if (koderFoundIndex < 0 ){
+    response.status(404)
+    response.json({
+      message: 'koder not found'
+    })
+    return
+  }
+
+  db.koders[koderFoundIndex] = {
+    ...db.koders[koderFoundIndex],
+    ...request.body
+  }
+
+  const dbAsString = JSON.stringify(db, '\n', 2)
+  await fs.writeFile('kodemia.json', dbAsString, 'utf8')
+
+  response.json(db.koders[koderFoundIndex])
+
 })
 
 app.listen(8080,()=>{
   console.log('listening server')
 })
+
+//GET http://kodemia.mx/clases?
+//GET http://localhost:8080/koders?hobbie=caminar
+
