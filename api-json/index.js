@@ -1,7 +1,9 @@
+const { response, request } = require("express");
 const express = require("express");
 const app = express();
 app.use(express.json())// sin esta linea no puedo leer body
 const fs = require("fs/promises");
+const { parse } = require("path");
 
 // //funcion para terminar en caso de error 
 // const atTheEnd = (err) => {
@@ -181,13 +183,59 @@ app.patch('/koders/:id', async (request, response) => {
 
 })
 //------------------------practica------------
-
+//get
 app.get('/mentors', async (request, response) => {
   const data = await fs.readFile('kodemia.json', 'utf8')
   const db = JSON.parse(data)
   let mentorsFound = db.mentors
   
   response.json(mentorsFound)
+})
+//get por id
+app.get('/mentors/:id', async (request, response) => {
+  const id = parseInt(request.params.id)
+  const data = await fs.readFile('kodemia.json', 'utf8')
+  const db = JSON.parse(data)
+
+  const mentorFound = db.mentors.find((mentor) =>{
+    return mentor.id === id
+  })
+
+  response.json(mentorFound)
+})
+
+//Crear un  mentor
+app.post('/mentors', async (request, response) => {
+  const data = await fs.readFile('kodemia.json', 'utf8')
+  const db = JSON.parse(data)
+
+  const newMentorId = db.mentors.length + 1
+  const newMentorData = {
+    id: newMentorId,
+    ... request.body
+  }
+
+  db.mentors.push(newMentorData)
+
+  const dbAsString = JSON.stringify(db, '\n', 2)
+  await fs.writeFile('kodemia.json', dbAsString, 'utf8')
+
+  response.json(db.mentors)
+})
+
+//borrar mentor
+app.delete('/mentors/:id', async (request, response) =>{
+  const id = parseInt(request.params.id)
+  const data = await fs.readFile('kodemia.json', 'utf8')
+  const db = JSON.parse(data)
+
+  const newMentorsArray = db.mentors.filter((mentor) => id != mentor.id)
+  db.mentors = newMentorsArray
+
+  const dbAsString = JSON.stringify(db, '\n', 2)
+  await fs.writeFile('kodemia.json', dbAsString, 'utf8')
+
+  response.json(db.mentors)
 })
 
 app.listen(8080,()=>{
