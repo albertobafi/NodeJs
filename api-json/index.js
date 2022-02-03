@@ -181,19 +181,6 @@ app.patch('/koders/:id', async (request, response) => {
 
 })
 //------------------------practica------------
-// app.get('/koders',async (request,response)=>{
-//   const data = await fs.readFile('kodemia.json','utf-8')
-//   const db = JSON.parse(data)
-//   let kodersFound = db.koders
-
-//   if(request.query.max_age){
-//     kodersFound = kodersFound.filter((koder)=>{
-//       return koder.age <= parseInt(request.query.max_age)
-//     })
-//   }
-
-//   response.json(kodersFound)
-// })
 
 app.get('/mentors', async (request, response) => {
   const data = await fs.readFile('kodemia.json', 'utf8')
