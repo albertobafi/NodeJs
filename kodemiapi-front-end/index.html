@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="content"></div>
+    <button id="create" onclick="create">create koders</button>
+    <script>
+        // get koders
+        fetch('http://localhost:8080/koders', {
+            method:'GET',
+            headers: {
+                Authorization: 'Bearer'
+            }
+        })
+        .then(response => response.json())
+        .then(json => {
+            console.log('json: ', json)
+            const koders = json.koders
+            const content = document.getElementById('content')
+
+            koders.forEach(koder => {
+                content.append(`
+                <p> Koder: ${koder.name} hobbies: ${koder.hobbies} </p>
+                `)
+            });
+
+        })
+        .catch(error => {
+            console.error('get koders error: ', error)
+        })
+    </script>
+</body>
+</html>
